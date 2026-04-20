@@ -1,23 +1,38 @@
- <section class="product-table-wrapper">
-    <table class="product-table" role="grid" aria-describedby="Produktliste">
-        <thead>
-            <tr>
-                <th>Produkt</th>
-                <th>Beschreibung</th>
-                <th>Bestand</th>
-                <th>Preis(€)</th>
-                <th>Details</th>
-            </tr>
-        </thead>
-<tbody>     
-            <tr role="link">
-                <td>Computermaus</td>
-                <td>optisch, USB-Anschluss, schwarz</td>
-                <td><span class="badge ok">104</span></td>
-                <td class="price">18,00</td>
-                <td><a class="btn--view" aria-label="Details anzeigen"></a></td>
-            </tr>
-            <tr role="link">
+<section class="product-table-wrapper">
+  <table class="product-table" role="grid" aria-describedby="Produktliste">
+    <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Beschreibung</th>
+        <th>Bestand</th>
+        <th>Preis(€)</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of list; track item.name; let index = $index) {
+        <tr role="link">
+          <td>{{item.name}}</td>
+          <td>{{item.specs}}</td>
+          <td><span class="badge ok">{{item.stock}}</span></td>
+          <td class="price">
+            @switch (true) {
+                @case (item.price > 1000000) {
+                    {{item.price/1000000}} Mio. €
+                }
+                @case (item.price > 1000) {
+                    {{item.price/1000}} Tsd. €
+                }
+                @default {
+                    {{item.price}} €
+                }   
+            }
+          </td>
+          <td><a class="btn--view" aria-label="Details anzeigen"></a></td>
+        </tr>
+      }
+
+      <!-- <tr role="link">
                 <td>HDMI-Kabel High-Speed</td>
                 <td>2 m, vergoldete Stecker</td>
                 <td><span class="badge low">64</span></td>
@@ -37,11 +52,8 @@
                 <td><span class="badge ok">146</span></td>
                 <td class="price">18,99</td>
                 <td><a class="btn--view" aria-label="Details anzeigen"></a></td>
-            </tr>
-          </tbody>
-        </table>
-     </section>
-Dokumentation Produktliste 3/6
-Produktliste hinzufügen
-Du willst das? 
-Dann benutzt das hier: 
+            </tr> -->
+    </tbody>
+  </table>
+</section>
+Dokumentation Produktliste 3/6 Produktliste hinzufügen Du willst das? Dann benutzt das hier:
