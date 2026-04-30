@@ -1,6 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Products } from '../../services/products';
 
 @Component({
   selector: 'app-product-detail',
@@ -10,10 +11,12 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ProductDetail {
   private route = inject(ActivatedRoute);
+  productService = inject(Products);
 
   ngOnInit() {
     const currentName = this.route.snapshot.paramMap.get('name');
-    if (currentName) this.detail.name = currentName;
+    if (currentName) this.productService.setProductDetailByName(currentName);
+    this.detail = this.productService.productdetail;
   }
 
   detail = {
