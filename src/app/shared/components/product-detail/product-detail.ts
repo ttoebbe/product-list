@@ -15,21 +15,12 @@ export class ProductDetail {
 
   ngOnInit() {
     const currentName = this.route.snapshot.paramMap.get('name');
-    if (currentName) this.productService.setProductDetailByName(currentName);
-    this.detail = this.productService.productdetail;
+    if (currentName) this.productService.setProductDetailByName(currentName)
   }
 
-  detail = {
-    name: 'Gaming Maus',
-    description:
-      'Eine ergonomische Gaming-Maus mit hoher Präzision und einstellbarer DPI. Ideal für FPS- und MOBA-Spiele, bietet sie eine langlebige Bauweise und komfortable Seitentasten für schnelles Reagieren.',
-    specs: 'dpi: 6400, cable length: 1.8m, color: Schwarz',
-    stock: 120,
-    price: 2500000,
-    addedAt: new Date('2024-01-15'),
-  };
+  detail = this.productService.productdetail;
 
   deleteDetail() {
-    this.detail.name = '';
+    // this.detail.name = '';
   }
 }
