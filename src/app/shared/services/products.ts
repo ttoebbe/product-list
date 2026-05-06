@@ -16,6 +16,10 @@ export class Products {
     addedAt: new Date(),
   });
 
+  addProduct(product: Product) {
+    this.productlist.update(list => [...list, product]);
+  }
+
   setProductDetailByName(name: string) {
     let tmpProduct = this.productlist().find((product) => product.name === name);
     if (tmpProduct) {
