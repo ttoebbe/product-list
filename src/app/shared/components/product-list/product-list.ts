@@ -1,6 +1,6 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Products } from '../../services/products';
 
 @Component({
@@ -11,5 +11,11 @@ import { Products } from '../../services/products';
 })
 export class ProductList {
   productService = inject(Products);
+  router = inject(Router);
   list = this.productService.productlist;
+
+  onEditProduct(event: MouseEvent, name: string): void {
+    event.stopPropagation();
+    this.router.navigate(['/productform', name]);
+  }
 }

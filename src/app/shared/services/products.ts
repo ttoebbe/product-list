@@ -17,7 +17,11 @@ export class Products {
   });
 
   addProduct(product: Product) {
-    this.productlist.update(list => [...list, product]);
+    this.productlist.update((list) => [...list, product]);
+  }
+
+  updateProduct(name: string, updated: Product): void {
+    this.productlist.update((list) => list.map((p) => (p.name === name ? updated : p)));
   }
 
   setProductDetailByName(name: string) {

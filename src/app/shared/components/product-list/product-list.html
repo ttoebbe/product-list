@@ -7,7 +7,7 @@
         <th>Bestand</th>
         <th>Preis</th>
         <th>Hinzugefügt</th>
-        <th>Details</th>
+        <th>Aktionen</th>
       </tr>
     </thead>
     <tbody>
@@ -20,7 +20,20 @@
           </td>
           <td class="price">{{ item.price | currency: 'EUR' }}</td>
           <td>{{ item.addedAt | date: 'dd.MM.yyyy' }}</td>
-          <td><a class="btn--view" aria-label="Details anzeigen"></a></td>
+          <td>
+            <a
+              [routerLink]="['/detail', item.name]"
+              class="btn--view"
+              aria-label="Details anzeigen"
+              (click)="$event.stopPropagation()"
+            ></a>
+            <button
+              type="button"
+              class="btn--edit"
+              aria-label="Produkt bearbeiten"
+              (click)="onEditProduct($event, item.name)"
+            ></button>
+          </td>
         </tr>
       }
     </tbody>

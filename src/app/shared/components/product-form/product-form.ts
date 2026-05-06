@@ -1,44 +1,81 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Products } from '../../services/products';
 import { Product } from '../../interfaces/product';
 
 @Component({
   selector: 'app-product-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './product-form.html',
   styleUrl: './product-form.scss',
 })
-export class ProductForm {
-
+export class ProductForm implements OnInit {
   router = inject(Router);
-  productService = inject(Products);  
+  route = inject(ActivatedRoute);
+  productService = inject(Products);
+
+  isEditMode = false;
+  private originalName = '';
 
   productForm = new FormGroup({
-    name: new FormControl('n/a', {validators: [Validators.required, Validators.minLength(3)]}),
-    price: new FormControl(0.00, {validators: [Validators.required, Validators.min(0)]}),
-    description: new FormControl('n/a',),
-    // specs: new FormControl('n/a', {validators: [Validators.required]}),
-    stock: new FormControl(0, {validators: [Validators.required, Validators.min(0)]}),
+    name: new FormControl('', {
+      validators: [Validators.required, Validators.minLength(3)],
+    }),
+    price: new FormControl(0.0, {
+      validators: [Validators.required, Validators.min(0)],
+    }),
+    description: new FormControl(''),
+    specs: new FormControl('', {
+      validators: [Validators.required, Validators.minLength(3)],
+    }),
+    stock: new FormControl(0, {
+      validators: [Validators.required, Validators.min(0)],
+    }),
   });
 
-  onSubmit() {
-    // TODO: Use EventEmitter with form value
-    if(this.productForm.valid) {
-    console.log(this.productForm.value);
+  ngOnInit(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    if (!name) return;
 
-    let product: Product ={
-      name: this.productForm.value.name?this.productForm.value.name:'n/a',
-      description: this.productForm.value.description?this.productForm.value.description:'n/a',
-      specs: 'n/a',
-      stock: this.productForm.value.stock?this.productForm.value.stock:0,
-      price: this.productForm.value.price?this.productForm.value.price:0.0,
-      addedAt: new Date(),
+    this.isEditMode = true;
+    this.originalName = name;
+
+    const product = this.productService.productlist().find((p) => p.name === name);
+    if (product) {
+      this.productForm.patchValue({
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        specs: product.specs,
+        stock: product.stock,
+      });
+    }
+  }
+
+  onSubmit(): void {
+    if (!this.productForm.valid) {
+      this.productForm.markAllAsTouched();
+      return;
+    }
+
+    const original = this.productService.productlist().find((p) => p.name === this.originalName);
+
+    const product: Product = {
+      name: this.productForm.value.name ?? '',
+      description: this.productForm.value.description ?? '',
+      specs: this.productForm.value.specs ?? '',
+      stock: this.productForm.value.stock ?? 0,
+      price: this.productForm.value.price ?? 0,
+      addedAt: this.isEditMode ? (original?.addedAt ?? new Date()) : new Date(),
     };
 
-    this.productService.addProduct(product);
+    if (this.isEditMode) {
+      this.productService.updateProduct(this.originalName, product);
+    } else {
+      this.productService.addProduct(product);
     }
-    this.router.navigate(["/"]);
+
+    this.router.navigate(['/']);
   }
 }

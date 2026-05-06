@@ -1,42 +1,60 @@
 <section class="product-form">
-    <header class="product-form__header">
-        <h1>Produkt erstellen</h1>
-        <a href="" class="btn--close"></a>
-    </header>
-    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-        <fieldset class="product-form__fieldset--vert">
-            <legend>Product Information</legend>
+  <header class="product-form__header">
+    <h1>{{ isEditMode ? 'Product bearbeiten' : 'Produkt erstellen' }}</h1>
+    <a routerLink="/" class="btn--close" aria-label="Schließen"></a>
+  </header>
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    <fieldset class="product-form__fieldset--vert">
+      <legend>Product Information</legend>
 
-            <label for="product-name">Produkt Name:</label>
-            <input type="text" id="product-name" formControlName="name" />
-            @if (productForm.get('name')?.hasError('required')) {
-                <p class="product-form__error">fehler:</p>
-                <p class="product-form__error">Bitte gib einen Namen ein</p>
-            }
-            @if (productForm.get('name')?.hasError('minlength')) {
-                <p class="product-form__error">fehler:</p>
-                <p class="product-form__error">Der Name muss mindestens 3 Zeichen lang sein</p>
-            }
+      <label for="product-name">Produkt Name:</label>
+      <input type="text" id="product-name" formControlName="name" />
+      @if (productForm.get('name')?.touched && productForm.get('name')?.hasError('required')) {
+        <p class="product-form__error">Bitte gib einen Namen ein</p>
+      }
+      @if (productForm.get('name')?.touched && productForm.get('name')?.hasError('minlength')) {
+        <p class="product-form__error">Der Name muss mindestens 3 Zeichen lang sein</p>
+      }
 
-            <label for="description">Beschreibung:</label>
-            <textarea id="description" name="description" rows="4" formControlName="description"></textarea>
-        </fieldset>
+      <label for="description">Beschreibung:</label>
+      <textarea id="description" rows="4" formControlName="description"></textarea>
 
-        <fieldset class="product-form__fieldset--hori">
-            <legend>Stock &amp; Pricing</legend>
+      <label for="specs">Technische Daten:</label>
+      <input type="text" id="specs" formControlName="specs" />
+      @if (productForm.get('specs')?.touched && productForm.get('specs')?.hasError('required')) {
+        <p class="product-form__error">Bitte gib technische Daten ein</p>
+      }
+      @if (productForm.get('specs')?.touched && productForm.get('specs')?.hasError('minlength')) {
+        <p class="product-form__error">
+          Die technischen Daten müssen mindestens 3 Zeichen lang sein
+        </p>
+      }
+    </fieldset>
 
-            <label for="stock">Lagerbestand:</label>
-            <input type="number" id="stock" name="stock" formControlName="stock" />
+    <fieldset class="product-form__fieldset--hori">
+      <legend>Stock &amp; Pricing</legend>
 
-            <label for="price">Preis pro Stück (€):</label>
-            <input type="number" id="price" name="price" step="0.01" formControlName="price" />
-        </fieldset>
+      <label for="stock">Lagerbestand:</label>
+      <input type="number" id="stock" formControlName="stock" />
+      @if (productForm.get('stock')?.touched && productForm.get('stock')?.hasError('required')) {
+        <p class="product-form__error">Bitte gib einen Lagerbestand ein</p>
+      }
+      @if (productForm.get('stock')?.touched && productForm.get('stock')?.hasError('min')) {
+        <p class="product-form__error">Der Lagerbestand darf nicht negativ sein</p>
+      }
 
-        <button type="submit" class="btn btn--primary">Produkt hinzufügen</button>
-    </form>
+      <label for="price">Preis pro Stück (€):</label>
+      <input type="number" id="price" step="0.01" formControlName="price" />
+      @if (productForm.get('price')?.touched && productForm.get('price')?.hasError('required')) {
+        <p class="product-form__error">Bitte gib einen Preis ein</p>
+      }
+      @if (productForm.get('price')?.touched && productForm.get('price')?.hasError('min')) {
+        <p class="product-form__error">Der Preis darf nicht negativ sein</p>
+      }
+    </fieldset>
+
+    <button type="submit" class="btn btn--primary">
+      {{ isEditMode ? 'Produkt speichern' : 'Produkt hinzufügen' }}
+    </button>
+  </form>
 </section>
-für Fehlermeldungen:
-<p class="product-form__error">Fehler:</p>
-<p class="product-form__error">
- Deine Fehlermeldung
-</p>
