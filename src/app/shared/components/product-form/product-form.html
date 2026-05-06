@@ -9,6 +9,14 @@
 
             <label for="product-name">Produkt Name:</label>
             <input type="text" id="product-name" formControlName="name" />
+            @if (productForm.get('name')?.hasError('required')) {
+                <p class="product-form__error">fehler:</p>
+                <p class="product-form__error">Bitte gib einen Namen ein</p>
+            }
+            @if (productForm.get('name')?.hasError('minlength')) {
+                <p class="product-form__error">fehler:</p>
+                <p class="product-form__error">Der Name muss mindestens 3 Zeichen lang sein</p>
+            }
 
             <label for="description">Beschreibung:</label>
             <textarea id="description" name="description" rows="4" formControlName="description"></textarea>
