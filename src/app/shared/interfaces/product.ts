@@ -4,5 +4,5 @@ export interface Product {
     specs: string;
     stock: number;
     price: number;
-    addedAt: Date;   
+   
 }

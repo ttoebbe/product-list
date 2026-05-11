@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Products } from '../../services/products';
 import { Product } from '../../interfaces/product';
+import { ProductModel } from '../../models/productmodel';
 
 @Component({
   selector: 'app-product-form',
@@ -19,17 +20,17 @@ export class ProductForm implements OnInit {
   private originalName = '';
 
   productForm = new FormGroup({
-    name: new FormControl('', {
+    name: new FormControl('', {nonNullable: true,
       validators: [Validators.required, Validators.minLength(3)],
     }),
-    price: new FormControl(0.0, {
+    price: new FormControl(0.0, {nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
-    description: new FormControl(''),
-    specs: new FormControl('', {
+    description: new FormControl('', {nonNullable: true}),
+    specs: new FormControl('', {nonNullable: true,
       validators: [Validators.required, Validators.minLength(3)],
     }),
-    stock: new FormControl(0, {
+    stock: new FormControl(0, {nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
   });
@@ -61,14 +62,16 @@ export class ProductForm implements OnInit {
 
     const original = this.productService.productlist().find((p) => p.name === this.originalName);
 
-    const product: Product = {
-      name: this.productForm.value.name ?? '',
-      description: this.productForm.value.description ?? '',
-      specs: this.productForm.value.specs ?? '',
-      stock: this.productForm.value.stock ?? 0,
-      price: this.productForm.value.price ?? 0,
-      addedAt: this.isEditMode ? (original?.addedAt ?? new Date()) : new Date(),
-    };
+    // const product: Product = {
+    //   name: this.productForm.value.name ?? '',
+    //   description: this.productForm.value.description ?? '',
+    //   specs: this.productForm.value.specs ?? '',
+    //   stock: this.productForm.value.stock ?? 0,
+    //   price: this.productForm.value.price ?? 0,
+    //   addedAt: this.isEditMode ? (original?.addedAt ?? new Date()) : new Date(),
+    // };
+    let product = new ProductModel(this.productForm.value);
+
 
     if (this.isEditMode) {
       this.productService.updateProduct(this.originalName, product);
