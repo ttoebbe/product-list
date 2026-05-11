@@ -12,6 +12,8 @@ export class Products {
     'sb_publishable_SBcuJI_mU4JEg40-LimfUA_Zrrny2rP',
   );
 
+  productlistInsertChannel;
+
   productlist = signal<Product[]>([]);
 
   productdetail = signal<Product>({
@@ -23,13 +25,29 @@ export class Products {
     price: 0,
   });
 
+  constructor() {
+    this.getAllProducts();
+
+    this.productlistInsertChannel = this.supabase
+      .channel('custom-insert-channel')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'products' },
+        (payload) => {
+          let tmpProduct = new ProductModel(payload.new);
+          this.productlist.update((list) => [...list, tmpProduct]);
+        },
+      )
+      .subscribe();
+  }
+
   async addProduct(product: ProductModel) {
     // console.log(product.getCleanAddJson());
 
     const product_data = product.getCleanAddJson();
     const { data, error } = await this.supabase.from('products').insert([product_data]).select();
 
-    this.productlist.update((list) => [...list, product]);
+    
   }
 
   updateProduct(name: string, updated: Product): void {
@@ -58,9 +76,5 @@ export class Products {
     console.log(response.data);
 
     this.productlist.set((response.data ?? []) as Product[]);
-  }
-
-  constructor() {
-    this.getAllProducts();
   }
 }
