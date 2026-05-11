@@ -13,6 +13,7 @@ export class Products {
   );
 
   productlistInsertChannel;
+  productlistDeleteChannel;
 
   productlist = signal<Product[]>([]);
 
@@ -39,12 +40,26 @@ export class Products {
         },
       )
       .subscribe();
+
+    this.productlistDeleteChannel = this.supabase
+      .channel('custom-delete-channel')
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'products' },
+        (payload) => {
+          let tmpProductId = payload.old["id"]
+          this.productlist.update(list => list.filter(product => product.id !== tmpProductId));
+        },
+      )
+
+      .subscribe();
   }
 
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
     this.supabase.removeChannel(this.productlistInsertChannel);
+    this.supabase.removeChannel(this.productlistDeleteChannel);
   }
 
   async addProduct(product: ProductModel) {
@@ -52,12 +67,14 @@ export class Products {
 
     const product_data = product.getCleanAddJson();
     const { data, error } = await this.supabase.from('products').insert([product_data]).select();
-
-    
   }
 
   updateProduct(name: string, updated: Product): void {
     this.productlist.update((list) => list.map((p) => (p.name === name ? updated : p)));
+  }
+
+  async deleteProduct(id: number) {
+   const { error } = await this.supabase.from('products').delete().eq('id', id);
   }
 
   setProductDetailByName(name: string) {
