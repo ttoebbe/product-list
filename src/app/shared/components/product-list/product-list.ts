@@ -5,7 +5,7 @@ import { Products } from '../../services/products';
 
 @Component({
   selector: 'app-product-list',
-  imports: [RouterLink, CurrencyPipe, DatePipe],
+  imports: [RouterLink, CurrencyPipe],
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss',
 })
