@@ -41,6 +41,12 @@ export class Products {
       .subscribe();
   }
 
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.supabase.removeChannel(this.productlistInsertChannel);
+  }
+
   async addProduct(product: ProductModel) {
     // console.log(product.getCleanAddJson());
 
